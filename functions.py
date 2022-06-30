@@ -41,10 +41,9 @@ def preprocessing(X):
 #%%Conditions for the decomposition part
 '''-----------Define the norm loss preventig the trivial zero-channel solution--------------------------'''
 def Norm_Loss(y_true,y_pred):
-    value1 = tf.norm(y_pred[:,:,:,0])
-    value2 = tf.norm(y_pred[:,:,:,1])
-    value3 = tf.norm(y_pred[:,:,:,2])
-    return tf.math.log(value1)+tf.math.log(value2)+tf.math.log(value3)
+    summe=(tf.norm(y_pred[:,:,:,0])-1)**2+ (tf.norm(y_pred[:,:,:,1])-1)**2 +(tf.norm(y_pred[:,:,:,0])-1)**2
+    return summe
+
 
 '''-----------Define the Coherence penalty term preventing the channels from being overlapping------'''
 def coherence_penalty(y_true,y_pred):
