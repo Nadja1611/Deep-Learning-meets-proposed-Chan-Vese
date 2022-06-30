@@ -22,19 +22,32 @@ import numpy as np
 import os
 import matplotlib.pylab as plt
 from skimage.transform import rescale, resize, downscale_local_mean
+from skimage.color import rgb2gray
+
+
+
+#%%preprocessing functions
+def preprocessing(X):
+    liste=[]
+    for i in range(len(X)):
+        m = (X[i]-np.mean(X[i]))/np.std(X[i])
+        liste.append(m)
+    X = np.asarray(liste)
+    X=np.expand_dims(X,axis=-1)
+    return X
 
 
 
 #%%Conditions for the decomposition part
 '''-----------Define the norm loss preventig the trivial zero-channel solution--------------------------'''
-def Norm_Loss(y_pred,y_true):
+def Norm_Loss(y_true,y_pred):
     value1 = tf.norm(y_pred[:,:,:,0])
     value2 = tf.norm(y_pred[:,:,:,1])
     value3 = tf.norm(y_pred[:,:,:,2])
     return 1-(value1+value2+value3)
 
 '''-----------Define the Coherence penalty term preventing the channels from being overlapping------'''
-def coherence_penalty(y_pred, true):
-    coh=1-tf.multiply(y_pred[:,:,:,1], y_pred[:,:,:,0])-tf.multiply(y_pred[:,:,:,1], y_pred[:,:,:,2])-tf.multiply(y_pred[:,:,:,2], y_pred[:,:,:,0])
+def coherence_penalty(y_true,y_pred):
+    coh=-K.sum(1-tf.math.log(tf.multiply(y_pred[:,:,:,1], y_pred[:,:,:,0]))-tf.math.log(tf.multiply(y_pred[:,:,:,1], y_pred[:,:,:,2])-tf.math.log(tf.multiply(y_pred[:,:,:,2], y_pred[:,:,:,0]))))
     return coh
 
