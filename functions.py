@@ -44,10 +44,10 @@ def Norm_Loss(y_true,y_pred):
     value1 = tf.norm(y_pred[:,:,:,0])
     value2 = tf.norm(y_pred[:,:,:,1])
     value3 = tf.norm(y_pred[:,:,:,2])
-    return 1-(value1+value2+value3)
+    return tf.math.log(value1)+tf.math.log(value2)+tf.math.log(value3)
 
 '''-----------Define the Coherence penalty term preventing the channels from being overlapping------'''
 def coherence_penalty(y_true,y_pred):
-    coh=-K.sum(1-tf.math.log(tf.multiply(y_pred[:,:,:,1], y_pred[:,:,:,0]))-tf.math.log(tf.multiply(y_pred[:,:,:,1], y_pred[:,:,:,2])-tf.math.log(tf.multiply(y_pred[:,:,:,2], y_pred[:,:,:,0]))))
+    coh=-K.sum(tf.math.log(1-tf.multiply(y_pred[:,:,:,1], y_pred[:,:,:,0]))-tf.math.log(1-tf.multiply(y_pred[:,:,:,1], y_pred[:,:,:,2])-tf.math.log(1-tf.multiply(y_pred[:,:,:,2], y_pred[:,:,:,0]))))
     return coh
 

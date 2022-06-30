@@ -26,14 +26,18 @@ def Phi():
 
 
 
-    conv10 = Conv2D(3, 3, 1, activation = 'relu', padding='same')(conv4)
+    conv10a = Conv2D(1, 3, 1, activation = 'relu', padding='same')(conv4)
+    conv10b = Conv2D(1, 3, 1, activation = 'relu', padding='same')(conv4)
+    conv10c = Conv2D(1, 3, 1, activation = 'relu', padding='same')(conv4)
+    conv10 = concatenate([conv10a,conv10b,conv10c],axis=-1)
+
     print(conv10.shape)
     
     
 
 #%% Reconstruction NW Psi, ground truth here is the original input image
 
-    conv1b = Conv2D(32, 3, 1, activation='relu', padding="same")(conv10)
+    conv1b = Conv2D(32, 3, 1, activation='relu', padding="same")(conv10a)
     conv1b = Conv2D(32, 3, 1, activation='relu',   padding="same")(conv1b)
     #print(conv1.shape)
 
@@ -46,15 +50,49 @@ def Phi():
     conv4b = Conv2D(256, 3, 1, activation='relu', padding='same')(conv3b)
     conv4b = Conv2D(256, 3, 1, activation='relu', padding='same')(conv4b)
 
-    conv10b = Conv2D(1, 3, 1, activation = 'sigmoid', padding='same')(conv4b)
-    print(conv10b.shape)
+    conv10d = Conv2D(1, 3, 1, activation = 'sigmoid', padding='same')(conv4b)
+    
+    
+    
+    
+    conv1bb = Conv2D(32, 3, 1, activation='relu', padding="same")(conv10b)
+    conv1bb = Conv2D(32, 3, 1, activation='relu',   padding="same")(conv1bb)
+    #print(conv1.shape)
+
+    conv2bb = Conv2D(64, 3, 1, activation='relu',padding="same")(conv1bb)
+    conv2bb = Conv2D(64, 3, 1, activation='relu', padding='same')(conv2bb)
+
+    conv3bb = Conv2D(128, 3, 1, activation='relu', padding='same')(conv2bb)
+    conv3bb = Conv2D(128, 3, 1, activation='relu', padding='same')(conv3bb)
+
+    conv4bb = Conv2D(256, 3, 1, activation='relu', padding='same')(conv3bb)
+    conv4bb = Conv2D(256, 3, 1, activation='relu', padding='same')(conv4bb)
+
+    conv10dd = Conv2D(1, 3, 1, activation = 'sigmoid', padding='same')(conv4bb)
+    
+    
+    conv1bbb = Conv2D(32, 3, 1, activation='relu', padding="same")(conv10c)
+    conv1bbb = Conv2D(32, 3, 1, activation='relu',   padding="same")(conv1bbb)
+    #print(conv1.shape)
+
+    conv2bbb = Conv2D(64, 3, 1, activation='relu',padding="same")(conv1bbb)
+    conv2bbb = Conv2D(64, 3, 1, activation='relu', padding='same')(conv2bbb)
+
+    conv3bbb = Conv2D(128, 3, 1, activation='relu', padding='same')(conv2bbb)
+    conv3bbb = Conv2D(128, 3, 1, activation='relu', padding='same')(conv3bbb)
+
+    conv4bbb = Conv2D(256, 3, 1, activation='relu', padding='same')(conv3bbb)
+    conv4bbb = Conv2D(256, 3, 1, activation='relu', padding='same')(conv4bbb)
+
+    conv10ddd = Conv2D(1, 3, 1, activation = 'sigmoid', padding='same')(conv4bbb)
+    print(conv10ddd.shape)
+    
+    recon = tf.keras.layers.add((conv10d,conv10dd,conv10ddd))
   #  out2 = [conv10b,conv10,conv10]
     print(conv10.shape)
-    out2 = [conv10b, conv10]
-    print(len(out2))
-    model = Model(inputs=images, outputs=[conv10,conv10,conv10b])
+    model = Model(inputs=images, outputs=[conv10,conv10,recon])
     
-    model.compile(optimizer=SGD(lr=1e-3, momentum=0.99, decay=1e-2), loss=[Norm_Loss,coherence_penalty, "MSE"], metrics=['accuracy'])
+    model.compile(optimizer=SGD(lr=1e-5, momentum=0.99, decay=1e-2), loss=[Norm_Loss,coherence_penalty, "MSE"], metrics=['accuracy'])
 
     return model
 model2=Phi()
