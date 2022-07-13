@@ -1,1 +1,69 @@
 
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jun 30 14:49:48 2022
+
+@author: nadja
+"""
+
+import os 
+from functions import*
+from models import *
+
+
+'''-----------------read in test image-----------------'''
+os.chdir("C://Users//nadja//Documents//Chan Vese Algorithm//Code_sauber//CV+DL")
+gt = plt.imread("meningiom.png")
+gt =resize(gt,(112,100))
+gt1 = rgb2gray(gt[:,:])
+gt1 = gt1[6:106,:]
+gt1 = np.expand_dims(gt1,axis=0)
+img = gt1-np.min(gt1)
+img = img/np.max(gt)
+img = preprocessing(gt1)
+ímg = img-np.min(img)
+img = img/np.max(img)
+
+
+epochs_number = 1000
+for i in range(epochs_number):
+    h = model2.fit(img,img, epochs=1, batch_size = 1, callbacks=[model_checkpoint], verbose=1)
+    predictions = model2.predict(img)
+    f = plt.figure()
+   
+
+    plt.axis('off')
+    f.add_subplot(1,6, 1)
+    plt.imshow(img[0],cmap="gray")
+    plt.gca().axes.get_yaxis().set_visible(False)
+    plt.gca().axes.get_xaxis().set_visible(False)
+    plt.colorbar()
+    f.add_subplot(1,6, 2)
+    plt.imshow(predictions[0][0,:,:,0],cmap="gray")
+    plt.gca().axes.get_yaxis().set_visible(False)
+    plt.gca().axes.get_xaxis().set_visible(False)
+    plt.colorbar()
+    f.add_subplot(1,6, 3)
+    plt.imshow(predictions[0][0,:,:,1],cmap="gray")
+    plt.gca().axes.get_yaxis().set_visible(False)
+    plt.gca().axes.get_xaxis().set_visible(False)
+    plt.colorbar()
+    f.add_subplot(1,6, 4)
+    plt.imshow(predictions[0][0,:,:,2],cmap="gray")
+    plt.gca().axes.get_yaxis().set_visible(False)
+    plt.gca().axes.get_xaxis().set_visible(False)
+    plt.colorbar()
+    f.add_subplot(1,6, 5)
+    plt.imshow(predictions[0][0,:,:,3],cmap="gray")
+    plt.gca().axes.get_yaxis().set_visible(False)
+    plt.gca().axes.get_xaxis().set_visible(False)
+    plt.colorbar()
+    f.add_subplot(1,6, 6)
+    plt.imshow(predictions[2][0,:,:,0],cmap="gray")
+    plt.gca().axes.get_yaxis().set_visible(False)
+    plt.gca().axes.get_xaxis().set_visible(False)
+    plt.colorbar()
+    plt.show()
+    
+    
+ 
